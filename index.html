@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>FAB Bank 360° Scenic VR Browser — Meta Quest 3</title>
+  <title>FAB Bank 360° Tropical Beach VR Browser — Meta Quest 3</title>
 
   <!-- Local Bundled Three.js Engine -->
   <script src="three.min.js"></script>
 
-  <!-- Google Fonts: Sora & Inter -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Sora:wght@700;800;900&display=swap" rel="stylesheet">
@@ -133,122 +133,139 @@
 
   <!-- Top Header Overlay -->
   <div id="header-bar">
-    <div class="brand-title">🏛️ FIRST ABU DHABI BANK <span>| 360° Scenic Skybox</span></div>
-    <div class="quest-badge">🌆 ABU DHABI SKYLINE 360° ENVIRONMENT</div>
+    <div class="brand-title">🏛️ FIRST ABU DHABI BANK <span>| 360° Tropical Beach VR</span></div>
+    <div class="quest-badge">🏖️ TROPICAL BEACH 360° + 3D KEYBOARD</div>
   </div>
 
   <!-- Instruction Toast -->
   <div id="instruction-toast">
-    <span id="toast-text">🔊 Layla: "Welcome to FAB VR! Enjoy the 360° Abu Dhabi Sunset Skyline background while browsing Google."</span>
+    <span id="toast-text">🔊 Layla: "Welcome to FAB VR! Point your Quest laser pointer at the 3D keyboard in front of you to search Google."</span>
   </div>
 
-  <!-- 360° SCENIC WEBXR BROWSER ENGINE -->
+  <!-- 360° TROPICAL BEACH BROWSER ENGINE -->
   <script>
     'use strict';
 
     // ------------------------------------------------------------------
-    // 1. THREE.JS & DOLLY CAMERA RIG SETUP (FULL 360° LOCOMOTION)
+    // 1. THREE.JS & DOLLY CAMERA RIG SETUP (PERFECT SPATIAL SEPARATION)
     // ------------------------------------------------------------------
     const canvas = document.getElementById('webxr-canvas');
     const toastText = document.getElementById('toast-text');
 
     const scene = new THREE.Scene();
 
-    // Dolly Camera Rig Group (Move & Rotate in VR Space)
+    // Dolly Camera Rig Group (Spawn standing at Origin 0,0,0)
     const dolly = new THREE.Group();
-    dolly.position.set(0, 0, 4.2); // Spawn 4.2m back from screen
+    dolly.position.set(0, 0, 0);
     scene.add(dolly);
 
     const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 1.6, 0); // Standing eye height
+    camera.position.set(0, 1.6, 0); // 1.6m standing eye height
     dolly.add(camera);
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.xr.enabled = true; // Enable WebXR for Quest Browser
+    renderer.xr.enabled = true; // WebXR enabled for Quest Browser
 
     // ------------------------------------------------------------------
-    // 2. 360° HIGH-DEFINITION SCENIC ABU DHABI SKYLINE PANORAMA SKYBOX
+    // 2. 360° PHOTOREALISTIC TROPICAL BEACH PANORAMA SKYBOX
     // ------------------------------------------------------------------
-    function create360ScenicSkybox() {
-      const skyCanvas = document.createElement('canvas');
-      skyCanvas.width = 4096;
-      skyCanvas.height = 2048;
-      const sCtx = skyCanvas.getContext('2d');
+    function create360BeachSkybox() {
+      const bCanvas = document.createElement('canvas');
+      bCanvas.width = 4096;
+      bCanvas.height = 2048;
+      const bCtx = bCanvas.getContext('2d');
 
-      // 360 Sunset Sky Gradient (Deep Navy -> Purple -> Golden Horizon)
-      const grad = sCtx.createLinearGradient(0, 0, 0, 2048);
-      grad.addColorStop(0.0, '#040714'); // Zenith Deep Space
-      grad.addColorStop(0.35, '#0B1838'); // Deep Navy
-      grad.addColorStop(0.55, '#1E2C52'); // Twilight Purple
-      grad.addColorStop(0.70, '#F59E0B'); // Golden Sunset Horizon
-      grad.addColorStop(0.74, '#D97706'); // Warm Horizon Amber
-      grad.addColorStop(1.0, '#050A1A'); // Ground Base
-      sCtx.fillStyle = grad;
-      sCtx.fillRect(0, 0, 4096, 2048);
+      // Tropical Sky & Sun Gradient
+      const skyGrad = bCtx.createLinearGradient(0, 0, 0, 2048);
+      skyGrad.addColorStop(0.0, '#004080'); // Deep Tropical Blue Sky
+      skyGrad.addColorStop(0.4, '#0080FF'); // Bright Cyan Sky
+      skyGrad.addColorStop(0.55, '#80E5FF'); // Soft Horizon Glow
+      skyGrad.addColorStop(0.58, '#00E5EE'); // Turquoise Ocean Horizon
+      skyGrad.addColorStop(0.65, '#008080'); // Deep Turquoise Ocean
+      skyGrad.addColorStop(0.72, '#E6C280'); // Golden Beach Sand
+      skyGrad.addColorStop(1.0, '#C29B53'); // Deep Beach Sand Ground
+      bCtx.fillStyle = skyGrad;
+      bCtx.fillRect(0, 0, 4096, 2048);
 
-      // Starfield in Upper Sky
-      sCtx.fillStyle = '#FFFFFF';
-      for (let i = 0; i < 600; i++) {
-        const sx = Math.random() * 4096;
-        const sy = Math.random() * 1100;
-        const sr = Math.random() * 2 + 0.5;
-        sCtx.globalAlpha = Math.random() * 0.8 + 0.2;
-        sCtx.beginPath();
-        sCtx.arc(sx, sy, sr, 0, Math.PI * 2);
-        sCtx.fill();
+      // Tropical Clouds in Upper Sky
+      bCtx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      for (let i = 0; i < 40; i++) {
+        const cx = Math.random() * 4096;
+        const cy = 200 + Math.random() * 600;
+        const cr = 60 + Math.random() * 140;
+        bCtx.beginPath();
+        bCtx.arc(cx, cy, cr, 0, Math.PI * 2);
+        bCtx.arc(cx + cr * 0.6, cy - 20, cr * 0.7, 0, Math.PI * 2);
+        bCtx.arc(cx - cr * 0.6, cy + 10, cr * 0.8, 0, Math.PI * 2);
+        bCtx.fill();
       }
-      sCtx.globalAlpha = 1.0;
 
-      // 360° Abu Dhabi Sunset City Skyline Silhouettes
-      const horizonY = 1480;
+      // Shimmering Golden Sun & Sunlight Reflection on Water
+      const sunX = 2048;
+      const sunY = 1100;
+      const sunGrad = bCtx.createRadialGradient(sunX, sunY, 30, sunX, sunY, 500);
+      sunGrad.addColorStop(0, 'rgba(255, 255, 220, 0.95)');
+      sunGrad.addColorStop(0.2, 'rgba(255, 215, 0, 0.6)');
+      sunGrad.addColorStop(1, 'rgba(255, 215, 0, 0)');
+      bCtx.fillStyle = sunGrad;
+      bCtx.beginPath();
+      bCtx.arc(sunX, sunY, 500, 0, Math.PI * 2);
+      bCtx.fill();
 
-      // Glowing Sun / Horizon Glow
-      const sunGrad = sCtx.createRadialGradient(2048, horizonY, 20, 2048, horizonY, 600);
-      sunGrad.addColorStop(0, 'rgba(255, 215, 0, 0.9)');
-      sunGrad.addColorStop(0.3, 'rgba(245, 158, 11, 0.5)');
-      sunGrad.addColorStop(1, 'rgba(245, 158, 11, 0)');
-      sCtx.fillStyle = sunGrad;
-      sCtx.beginPath();
-      sCtx.arc(2048, horizonY, 600, 0, Math.PI * 2);
-      sCtx.fill();
-
-      // Draw Skyscrapers around 360° Horizon
-      sCtx.fillStyle = '#060E24';
-      sCtx.strokeStyle = '#FFD700';
-      sCtx.lineWidth = 1;
-
-      for (let x = 0; x < 4096; x += 40 + Math.random() * 60) {
-        const buildingW = 35 + Math.random() * 65;
-        const buildingH = 120 + Math.random() * 320;
-        const by = horizonY - buildingH;
-
-        sCtx.fillRect(x, by, buildingW, buildingH);
-
-        // Lit Windows on Skyscrapers
-        sCtx.fillStyle = Math.random() > 0.4 ? 'rgba(0, 255, 255, 0.7)' : 'rgba(255, 215, 0, 0.7)';
-        for (let wy = by + 20; wy < horizonY - 10; wy += 25) {
-          for (let wx = x + 8; wx < x + buildingW - 10; wx += 14) {
-            if (Math.random() > 0.3) {
-              sCtx.fillRect(wx, wy, 6, 12);
-            }
-          }
+      // Ocean Wave Lines & Shimmer
+      bCtx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+      bCtx.lineWidth = 3;
+      for (let y = 1150; y < 1450; y += 15) {
+        bCtx.beginPath();
+        for (let x = 0; x < 4096; x += 100) {
+          bCtx.quadraticCurveTo(x + 50, y + (Math.random() - 0.5) * 10, x + 100, y);
         }
-        sCtx.fillStyle = '#060E24'; // Reset building color
+        bCtx.stroke();
       }
 
-      // 360 Panorama Texture Applied to Outer Skydome
-      const skyTexture = new THREE.CanvasTexture(skyCanvas);
-      const skyGeo = new THREE.SphereGeometry(200, 60, 40);
-      const skyMat = new THREE.MeshBasicMaterial({ map: skyTexture, side: THREE.BackSide });
-      const skyDome = new THREE.Mesh(skyGeo, skyMat);
+      // Palm Tree Silhouettes around 360° Horizon
+      bCtx.fillStyle = '#051829';
+      for (let px = 200; px < 4096; px += 600 + Math.random() * 400) {
+        const trunkH = 300 + Math.random() * 150;
+        const basey = 1450;
+
+        // Curved Trunk
+        bCtx.beginPath();
+        bCtx.moveTo(px, basey);
+        bCtx.quadraticCurveTo(px + 40, basey - trunkH / 2, px + 20, basey - trunkH);
+        bCtx.lineWidth = 18;
+        bCtx.strokeStyle = '#051829';
+        bCtx.stroke();
+
+        // Palm Leaves Fronds
+        const topX = px + 20;
+        const topY = basey - trunkH;
+        for (let leaf = 0; leaf < 8; leaf++) {
+          const angle = (leaf / 8) * Math.PI * 2;
+          const lx = topX + Math.cos(angle) * 160;
+          const ly = topY + Math.sin(angle) * 100;
+          bCtx.beginPath();
+          bCtx.moveTo(topX, topY);
+          bCtx.quadraticCurveTo(topX + Math.cos(angle) * 80, topY + Math.sin(angle) * 50 - 40, lx, ly);
+          bCtx.lineWidth = 8;
+          bCtx.stroke();
+        }
+      }
+
+      // 360° Skybox Texture applied to outer skydome
+      const skyTexture = new THREE.CanvasTexture(bCanvas);
+      const skyDome = new THREE.Mesh(
+        new THREE.SphereGeometry(180, 60, 40),
+        new THREE.MeshBasicMaterial({ map: skyTexture, side: THREE.BackSide })
+      );
       scene.add(skyDome);
     }
-    create360ScenicSkybox();
+    create360BeachSkybox();
 
     // ------------------------------------------------------------------
-    // 3. WEB AUDIO SPATIAL SOUND SYSTEM
+    // 3. WEB AUDIO SPATIAL SOUND SYSTEM (WEBXR AUDIO FIX)
     // ------------------------------------------------------------------
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -262,29 +279,44 @@
       if (type === 'keypress') {
         osc.frequency.setValueAtTime(600, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.06);
-        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
         gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.06);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.06);
       } else if (type === 'backspace') {
         osc.frequency.setValueAtTime(500, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.08);
-        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
         gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.08);
       } else if (type === 'search') {
-        osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.25);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+        osc.frequency.setValueAtTime(450, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1300, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.25);
+        osc.stop(audioCtx.currentTime + 0.3);
+      }
+    }
+
+    function speakLayla(text) {
+      if (toastText) toastText.textContent = `🔊 Layla: "${text}"`;
+
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.95;
+        utterance.pitch = 1.05;
+        utterance.lang = 'en-US';
+        window.speechSynthesis.speak(utterance);
       }
     }
 
     // ------------------------------------------------------------------
-    // 4. WEBXR VR BUTTON LAUNCHER
+    // 4. WEBXR VR BUTTON LAUNCHER (WEBXR AUDIO & VR SESSION INITIALIZATION)
     // ------------------------------------------------------------------
     function createVRButton() {
       const button = document.createElement('button');
@@ -293,14 +325,17 @@
       if ('xr' in navigator) {
         navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
           if (supported) {
-            button.textContent = '🥽 ENTER 360° SCENIC VR';
+            button.textContent = '🥽 ENTER 360° BEACH VR BROWSER';
             button.onclick = () => {
+              // Unlock Web Audio Context inside gesture
+              if (audioCtx.state === 'suspended') audioCtx.resume();
+
               navigator.xr.requestSession('immersive-vr', {
                 requiredFeatures: ['local-floor'],
                 optionalFeatures: ['bounded-floor', 'hand-tracking']
               }).then((session) => {
                 renderer.xr.setSession(session);
-                speakLayla("Welcome to FAB VR! Enjoy the 360 degree Abu Dhabi skyline while browsing.");
+                speakLayla("Welcome to FAB VR Browser! Point your controller laser at the keyboard in front of you to type and browse.");
               });
             };
           } else {
@@ -318,7 +353,7 @@
     createVRButton();
 
     // ------------------------------------------------------------------
-    // 5. QUEST 3 CONTROLLERS & RAYCASTING INTERACTION
+    // 5. QUEST 3 CONTROLLERS, LASER RAYCASTING & LOCOMOTION
     // ------------------------------------------------------------------
     const controller1 = renderer.xr.getController(0);
     dolly.add(controller1);
@@ -326,6 +361,7 @@
     const controller2 = renderer.xr.getController(1);
     dolly.add(controller2);
 
+    // Cyan Neon Pointer Lasers
     const laserGeo = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(0, 0, 0),
       new THREE.Vector3(0, 0, -8)
@@ -344,7 +380,7 @@
     controller1.addEventListener('selectstart', () => onControllerSelect(controller1));
     controller2.addEventListener('selectstart', () => onControllerSelect(controller2));
 
-    // Thumbstick Locomotion (Smooth Walking & Snap Turning)
+    // Thumbstick Movement (Left Stick = Walk, Right Stick = Snap Rotate)
     function updateLocomotion() {
       const session = renderer.xr.getSession();
       if (!session) return;
@@ -378,7 +414,7 @@
       }
     }
 
-    // Keyboard Locomotion Fallback (WASD for PC)
+    // Keyboard WASD Fallback for Desktop
     const keys = {};
     window.addEventListener('keydown', (e) => { keys[e.code] = true; });
     window.addEventListener('keyup', (e) => { keys[e.code] = false; });
@@ -397,80 +433,48 @@
     }
 
     // ------------------------------------------------------------------
-    // 6. 3D BANKING ENVIRONMENT & LIGHTING
+    // 6. TROPICAL BEACH WOODEN DECK PLATFORM & PODIUM
     // ------------------------------------------------------------------
-    const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.85);
+    const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.9);
     scene.add(ambientLight);
 
-    const goldSpot = new THREE.SpotLight(0xFFD700, 3.8);
-    goldSpot.position.set(0, 10, 2);
-    goldSpot.angle = Math.PI / 3;
-    scene.add(goldSpot);
+    const sunLight = new THREE.DirectionalLight(0xFFD700, 2.5);
+    sunLight.position.set(0, 15, -10);
+    scene.add(sunLight);
 
-    const cyanPoint = new THREE.PointLight(0x00FFFF, 2.5, 25);
-    cyanPoint.position.set(-7, 5, -4);
-    scene.add(cyanPoint);
-
-    // Polished Dark Marble Floor
-    const floor = new THREE.Mesh(
-      new THREE.PlaneGeometry(40, 40),
-      new THREE.MeshStandardMaterial({ color: 0x050A1A, roughness: 0.1, metalness: 0.85 })
+    // Wooden Beach Deck Flooring (30m x 30m)
+    const deckMesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(30, 30),
+      new THREE.MeshStandardMaterial({ color: 0x8B5A2B, roughness: 0.4, metalness: 0.1 })
     );
-    floor.rotation.x = -Math.PI / 2;
-    scene.add(floor);
+    deckMesh.rotation.x = -Math.PI / 2;
+    scene.add(deckMesh);
 
-    const grid = new THREE.GridHelper(40, 40, 0xFFD700, 0x001F3F);
+    const grid = new THREE.GridHelper(30, 30, 0xFFD700, 0x001F3F);
     grid.position.y = 0.01;
     scene.add(grid);
 
-    // Architectural Pillars
-    for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 4) {
-      const radius = 10;
-      const px = Math.sin(angle) * radius;
-      const pz = Math.cos(angle) * radius;
-
-      const pillar = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.45, 0.45, 14, 16),
-        new THREE.MeshStandardMaterial({ color: 0xFFD700, metalness: 0.9, roughness: 0.2 })
-      );
-      pillar.position.set(px, 7, pz);
-      scene.add(pillar);
-    }
-
-    // Floating Data Particles
-    const pCount = 200;
-    const pGeo = new THREE.BufferGeometry();
-    const pPos = new Float32Array(pCount * 3);
-    for (let i = 0; i < pCount * 3; i += 3) {
-      pPos[i] = (Math.random() - 0.5) * 20;
-      pPos[i + 1] = Math.random() * 7 + 0.5;
-      pPos[i + 2] = (Math.random() - 0.5) * 20;
-    }
-    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-    const particles = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0x00FFFF, size: 0.06, transparent: true, opacity: 0.75 }));
-    scene.add(particles);
-
-    // Podium Base
+    // Podium Base for Giant Screen
     const podium = new THREE.Mesh(
-      new THREE.CylinderGeometry(2.6, 3.0, 0.4, 32),
-      new THREE.MeshStandardMaterial({ color: 0x070D22, metalness: 0.9, roughness: 0.15 })
+      new THREE.CylinderGeometry(2.8, 3.2, 0.4, 32),
+      new THREE.MeshStandardMaterial({ color: 0x001F3F, metalness: 0.9, roughness: 0.15 })
     );
-    podium.position.set(0, 0.2, 0);
+    podium.position.set(0, 0.2, -3.5);
     scene.add(podium);
 
     const ring = new THREE.Mesh(
-      new THREE.RingGeometry(2.62, 2.78, 64),
+      new THREE.RingGeometry(2.82, 2.98, 64),
       new THREE.MeshBasicMaterial({ color: 0x00FFFF, side: THREE.DoubleSide })
     );
     ring.rotation.x = Math.PI / 2;
-    ring.position.set(0, 0.41, 0);
+    ring.position.set(0, 0.41, -3.5);
     scene.add(ring);
 
     // ------------------------------------------------------------------
-    // 7. DETAILED 3D LAYLA AVATAR WITH HEAD GAZE TRACKING
+    // 7. DETAILED 3D LAYLA AVATAR (STANDS BESIDE PODIUM)
     // ------------------------------------------------------------------
     const layla = new THREE.Group();
-    layla.position.set(2.5, 0, 0.2);
+    layla.position.set(2.8, 0, -2.8); // Positioned to right side of screen
 
     const bodyMat = new THREE.MeshStandardMaterial({ color: 0x001F3F, metalness: 0.5, roughness: 0.3 });
     const body = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.31, 1.35, 32), bodyMat);
@@ -505,24 +509,11 @@
       head.lookAt(worldCamPos);
     }
 
-    function speakLayla(text) {
-      if (toastText) toastText.textContent = `🔊 Layla: "${text}"`;
-
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 0.95;
-        utterance.pitch = 1.05;
-        utterance.lang = 'en-US';
-        window.speechSynthesis.speak(utterance);
-      }
-    }
-
     // ------------------------------------------------------------------
-    // 8. GIANT 5-METER INTERACTIVE 3D VR BROWSER SCREEN
+    // 8. GIANT 5-METER INTERACTIVE 3D VR BROWSER SCREEN (CLEAN Z=-3.5 DISTANCE)
     // ------------------------------------------------------------------
     const browserGroup = new THREE.Group();
-    browserGroup.position.set(0, 2.3, 0);
+    browserGroup.position.set(0, 2.4, -3.5); // Placed safely 3.5 meters in front of user
 
     const bCanvas = document.createElement('canvas');
     bCanvas.width = 1800;
@@ -530,37 +521,48 @@
     const bCtx = bCanvas.getContext('2d');
 
     const bTexture = new THREE.CanvasTexture(bCanvas);
-    const bMesh = new THREE.Mesh(new THREE.PlaneGeometry(4.0, 2.4), new THREE.MeshBasicMaterial({ map: bTexture, side: THREE.DoubleSide }));
+    const bMesh = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 2.52), new THREE.MeshBasicMaterial({ map: bTexture, side: THREE.DoubleSide }));
     browserGroup.add(bMesh);
 
-    const bFrame = new THREE.Mesh(new THREE.BoxGeometry(4.12, 2.52, 0.06), new THREE.MeshStandardMaterial({ color: 0x001F3F, metalness: 0.9, roughness: 0.1 }));
+    const bFrame = new THREE.Mesh(new THREE.BoxGeometry(4.32, 2.64, 0.06), new THREE.MeshStandardMaterial({ color: 0x001F3F, metalness: 0.9, roughness: 0.1 }));
     bFrame.position.z = -0.04;
     browserGroup.add(bFrame);
 
-    const bBorder = new THREE.Mesh(new THREE.BoxGeometry(4.18, 2.58, 0.04), new THREE.MeshBasicMaterial({ color: 0xFFD700 }));
+    const bBorder = new THREE.Mesh(new THREE.BoxGeometry(4.38, 2.70, 0.04), new THREE.MeshBasicMaterial({ color: 0xFFD700 }));
     bBorder.position.z = -0.05;
     browserGroup.add(bBorder);
 
     scene.add(browserGroup);
 
+    // Interactive Web Browser State
     let currentInputText = "google.com";
     let activeWebPage = "google";
     let currentSearchQuery = "";
 
+    const PRETEXT_SUGGESTIONS = [
+      "https://www.google.com",
+      "https://www.bankfab.com/en-ae/personal",
+      "FAB iSave High Yield Savings Account",
+      "FAB World Elite Credit Card UAE"
+    ];
+
     function renderBrowserScreen() {
+      // Browser Background
       const grad = bCtx.createLinearGradient(0, 0, 1800, 1080);
       grad.addColorStop(0, '#09132E');
       grad.addColorStop(1, '#040817');
       bCtx.fillStyle = grad;
       bCtx.fillRect(0, 0, 1800, 1080);
 
+      // Top Browser Bar
       bCtx.fillStyle = '#001F3F';
       bCtx.fillRect(0, 0, 1800, 120);
 
       bCtx.fillStyle = '#FFD700';
       bCtx.fillRect(0, 116, 1800, 4);
 
-      bCtx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+      // Address Bar Input Box
+      bCtx.fillStyle = 'rgba(255, 255, 255, 0.12)';
       bCtx.strokeStyle = '#00FFFF';
       bCtx.lineWidth = 3;
       bCtx.beginPath();
@@ -570,12 +572,13 @@
 
       bCtx.fillStyle = '#25D366';
       bCtx.font = 'bold 36px Sora, sans-serif';
-      bCtx.fillText('🔒', 190, 72);
+      bCtx.fillText('🔒 https://', 190, 72);
 
       bCtx.fillStyle = '#FFFFFF';
-      bCtx.font = '36px Inter, sans-serif';
-      bCtx.fillText(currentInputText + "  |", 250, 72);
+      bCtx.font = 'bold 36px Inter, sans-serif';
+      bCtx.fillText(currentInputText + "  |", 360, 72);
 
+      // Search Action Button
       bCtx.fillStyle = '#FFD700';
       bCtx.beginPath();
       bCtx.roundRect(1460, 20, 300, 80, 16);
@@ -585,45 +588,45 @@
       bCtx.font = 'bold 32px Sora, sans-serif';
       bCtx.fillText('🔍 SEARCH', 1510, 72);
 
+      // Pretext Quick Bookmarks
       bCtx.fillStyle = '#00FFFF';
-      bCtx.font = 'bold 26px Sora, sans-serif';
-      bCtx.fillText('QUICK LINKS:', 60, 175);
+      bCtx.font = 'bold 24px Sora, sans-serif';
+      bCtx.fillText('PRETEXT BOOKMARKS:', 60, 175);
 
-      bCtx.fillStyle = 'rgba(0, 255, 255, 0.15)';
-      bCtx.strokeStyle = '#00FFFF';
-      bCtx.lineWidth = 2;
-      bCtx.beginPath();
-      bCtx.roundRect(260, 145, 380, 45, 10);
-      bCtx.fill();
-      bCtx.stroke();
-      bCtx.fillStyle = '#00FFFF';
-      bCtx.font = 'bold 22px Sora, sans-serif';
-      bCtx.fillText('🏛️ BankFAB.com', 280, 176);
+      PRETEXT_SUGGESTIONS.forEach((sugg, i) => {
+        const sx = 320 + i * 360;
+        if (sx < 1700) {
+          bCtx.fillStyle = i === 0 ? 'rgba(0, 255, 255, 0.2)' : 'rgba(255, 215, 0, 0.15)';
+          bCtx.strokeStyle = i === 0 ? '#00FFFF' : '#FFD700';
+          bCtx.lineWidth = 2;
+          bCtx.beginPath();
+          bCtx.roundRect(sx, 145, 340, 45, 10);
+          bCtx.fill();
+          bCtx.stroke();
 
-      bCtx.fillStyle = 'rgba(255, 215, 0, 0.15)';
-      bCtx.strokeStyle = '#FFD700';
-      bCtx.beginPath();
-      bCtx.roundRect(660, 145, 320, 45, 10);
-      bCtx.fill();
-      bCtx.stroke();
-      bCtx.fillStyle = '#FFD700';
-      bCtx.font = 'bold 22px Sora, sans-serif';
-      bCtx.fillText('🔍 Google.com', 680, 176);
+          bCtx.fillStyle = i === 0 ? '#00FFFF' : '#FFD700';
+          bCtx.font = 'bold 18px Sora, sans-serif';
+          bCtx.fillText(sugg.length > 25 ? sugg.substring(0, 25) + "..." : sugg, sx + 15, 175);
+        }
+      });
 
+      // Render Page Content
       if (activeWebPage === "google") {
+        // Google Search Logo
         bCtx.fillStyle = '#FFFFFF';
-        bCtx.font = '900 110px Sora, sans-serif';
+        bCtx.font = '900 120px Sora, sans-serif';
         bCtx.textAlign = 'center';
         bCtx.fillText('Google', 900, 390);
         bCtx.textAlign = 'left';
 
-        bCtx.fillStyle = '#4285F4'; bCtx.fillText('G', 610, 390);
-        bCtx.fillStyle = '#EA4335'; bCtx.fillText('o', 690, 390);
-        bCtx.fillStyle = '#FBBC05'; bCtx.fillText('o', 755, 390);
-        bCtx.fillStyle = '#4285F4'; bCtx.fillText('g', 820, 390);
+        bCtx.fillStyle = '#4285F4'; bCtx.fillText('G', 590, 390);
+        bCtx.fillStyle = '#EA4335'; bCtx.fillText('o', 675, 390);
+        bCtx.fillStyle = '#FBBC05'; bCtx.fillText('o', 745, 390);
+        bCtx.fillStyle = '#4285F4'; bCtx.fillText('g', 815, 390);
         bCtx.fillStyle = '#34A853'; bCtx.fillText('l', 890, 390);
         bCtx.fillStyle = '#EA4335'; bCtx.fillText('e', 925, 390);
 
+        // Search Input Box
         bCtx.fillStyle = 'rgba(255, 255, 255, 0.08)';
         bCtx.strokeStyle = '#FFD700';
         bCtx.lineWidth = 4;
@@ -636,6 +639,7 @@
         bCtx.font = '38px Inter, sans-serif';
         bCtx.fillText(currentInputText.length > 0 ? currentInputText : "Search Google or type a URL...", 360, 540);
 
+        // Buttons
         bCtx.fillStyle = '#FFD700';
         bCtx.beginPath();
         bCtx.roundRect(540, 630, 340, 80, 16);
@@ -664,8 +668,9 @@
 
         bCtx.fillStyle = '#94A3B8';
         bCtx.font = '22px Inter, sans-serif';
-        bCtx.fillText('About 1,420,000 results (0.24 seconds)', 100, 300);
+        bCtx.fillText('About 1,420,000 results (0.22 seconds)', 100, 300);
 
+        // Result 1
         bCtx.fillStyle = '#4285F4';
         bCtx.font = 'bold 36px Sora, sans-serif';
         bCtx.fillText('First Abu Dhabi Bank (FAB) — Personal Banking UAE', 100, 380);
@@ -676,12 +681,16 @@
         bCtx.font = '26px Inter, sans-serif';
         bCtx.fillText('Open accounts, apply for credit cards, home loans, and personal loans with FAB Bank.', 100, 460);
 
+        // Result 2
         bCtx.fillStyle = '#4285F4';
         bCtx.font = 'bold 36px Sora, sans-serif';
         bCtx.fillText('FAB iSave Account — Up to 5.25% p.a. Interest Rate', 100, 550);
         bCtx.fillStyle = '#00FFFF';
         bCtx.font = '24px Inter, sans-serif';
         bCtx.fillText('https://www.bankfab.com/en-ae/personal/save/isave', 100, 590);
+        bCtx.fillStyle = '#CBD5E1';
+        bCtx.font = '26px Inter, sans-serif';
+        bCtx.fillText('Zero minimum balance. Instant digital account opening in UAE with zero paperwork.', 100, 630);
 
       } else if (activeWebPage === "fab_bank") {
         bCtx.fillStyle = '#FFD700';
@@ -732,11 +741,11 @@
     renderBrowserScreen();
 
     // ------------------------------------------------------------------
-    // 9. FLOATING 3D VIRTUAL KEYBOARD (POINT & TYPE)
+    // 9. PERFECTLY POSITIONED 3D VIRTUAL KEYBOARD (Z = -1.5, Y = 0.95)
     // ------------------------------------------------------------------
     const keyboardGroup = new THREE.Group();
-    keyboardGroup.position.set(0, 1.05, -1.6);
-    keyboardGroup.rotation.x = -Math.PI / 6;
+    keyboardGroup.position.set(0, 0.95, -1.5); // Floating 1.5m in front of standing user
+    keyboardGroup.rotation.x = -Math.PI / 7; // Tilted 25 degrees ergonomically
     scene.add(keyboardGroup);
 
     const keyObjects = [];
@@ -749,6 +758,7 @@
     ];
 
     function create3DVirtualKeyboard() {
+      // Base Plate
       const baseMesh = new THREE.Mesh(
         new THREE.BoxGeometry(2.4, 0.9, 0.04),
         new THREE.MeshStandardMaterial({ color: 0x001F3F, metalness: 0.9, roughness: 0.2 })
@@ -763,6 +773,7 @@
       baseBorder.position.z = -0.04;
       keyboardGroup.add(baseBorder);
 
+      // Key Meshes
       KEYBOARD_ROWS.forEach((row, rowIndex) => {
         const startY = 0.3 - rowIndex * 0.18;
         const totalKeys = row.length;
@@ -803,6 +814,7 @@
         });
       });
 
+      // Spacebar
       const spaceCanvas = document.createElement('canvas');
       spaceCanvas.width = 512;
       spaceCanvas.height = 128;
@@ -894,7 +906,6 @@
 
       layla.position.y = Math.sin(elapsed * 2) * 0.02;
       armGroup.rotation.z = Math.sin(elapsed * 3) * 0.2 + 0.3;
-      particles.rotation.y = elapsed * 0.04;
 
       renderer.render(scene, camera);
     }
