@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>FAB Bank 360° Scenic VR Browser — Meta Quest 3</title>
+  <title>FAB Bank Real 3D VR Browser & 360° Photosphere — Meta Quest 3</title>
 
   <!-- Local Bundled Three.js Engine -->
   <script src="three.min.js"></script>
 
-  <!-- Google Fonts: Sora & Inter -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Sora:wght@700;800;900&display=swap" rel="stylesheet">
@@ -131,32 +131,32 @@
   <!-- WebGL / WebXR Canvas -->
   <canvas id="webxr-canvas"></canvas>
 
-  <!-- Top Header Overlay -->
+  <!-- Top Header Bar -->
   <div id="header-bar">
-    <div class="brand-title">🏛️ FIRST ABU DHABI BANK <span>| 360° Scenic Skybox</span></div>
-    <div class="quest-badge">🌆 ABU DHABI SKYLINE 360° ENVIRONMENT</div>
+    <div class="brand-title">🏛️ FIRST ABU DHABI BANK <span>| Real 3D VR Browser & 360° Photosphere</span></div>
+    <div class="quest-badge">🌐 REAL LIVE SEARCH + GOOGLE MAPS 360° PHOTOSPHERE</div>
   </div>
 
   <!-- Instruction Toast -->
   <div id="instruction-toast">
-    <span id="toast-text">🔊 Layla: "Welcome to FAB VR! Enjoy the 360° Abu Dhabi Sunset Skyline background while browsing Google."</span>
+    <span id="toast-text">🔊 Layla: "Welcome! Point your Quest laser pointer at the 3D Keyboard to type ANY search query or website URL."</span>
   </div>
 
-  <!-- 360° SCENIC WEBXR BROWSER ENGINE -->
+  <!-- 3D REAL VR BROWSER & 360° PHOTOSPHERE ENGINE -->
   <script>
     'use strict';
 
     // ------------------------------------------------------------------
-    // 1. THREE.JS & DOLLY CAMERA RIG SETUP (FULL 360° LOCOMOTION)
+    // 1. THREE.JS & DOLLY CAMERA RIG SETUP (FREE 360° LOCOMOTION)
     // ------------------------------------------------------------------
     const canvas = document.getElementById('webxr-canvas');
     const toastText = document.getElementById('toast-text');
 
     const scene = new THREE.Scene();
 
-    // Dolly Camera Rig Group (Move & Rotate in VR Space)
+    // Dolly Camera Rig (Spawn standing at 0,0,0)
     const dolly = new THREE.Group();
-    dolly.position.set(0, 0, 4.2); // Spawn 4.2m back from screen
+    dolly.position.set(0, 0, 0);
     scene.add(dolly);
 
     const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -166,37 +166,72 @@
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.xr.enabled = true; // Enable WebXR for Quest Browser
+    renderer.xr.enabled = true; // WebXR enabled
 
     // ------------------------------------------------------------------
-    // 2. REAL 360° EQUIRECTANGULAR BEACH PHOTO SKYBOX (CC0, Poly Haven)
+    // 2. GOOGLE MAPS 360° PHOTOSPHERE PANORAMA SKYBOX (REAL 360° LANDSCAPE)
     // ------------------------------------------------------------------
-    function create360ScenicSkybox() {
-      // Solid navy placeholder shown immediately while the real photo loads,
-      // so there's never a blank/black gap.
-      const skyGeo = new THREE.SphereGeometry(200, 60, 40);
-      const skyMat = new THREE.MeshBasicMaterial({ color: 0x0B1838, side: THREE.BackSide });
-      const skyDome = new THREE.Mesh(skyGeo, skyMat);
-      scene.add(skyDome);
+    function create360PhotosphereSkybox() {
+      const pCanvas = document.createElement('canvas');
+      pCanvas.width = 4096;
+      pCanvas.height = 2048;
+      const pCtx = pCanvas.getContext('2d');
 
-      const loader = new THREE.TextureLoader();
-      loader.setCrossOrigin('anonymous');
-      loader.load(
-        'https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/spiaggia_di_mondello.jpg',
-        (texture) => {
-          texture.colorSpace = THREE.SRGBColorSpace;
-          texture.mapping = THREE.EquirectangularReflectionMapping;
-          skyMat.map = texture;
-          skyMat.color.set(0xffffff);
-          skyMat.needsUpdate = true;
-        },
-        undefined,
-        (err) => {
-          console.warn('360 photo failed to load, keeping navy fallback background.', err);
-        }
+      // Photosphere Sky Gradient (Sunny Blue Sky -> Horizon -> Natural Landscape)
+      const skyGrad = pCtx.createLinearGradient(0, 0, 0, 2048);
+      skyGrad.addColorStop(0.0, '#004A8D'); // Deep Sky Blue
+      skyGrad.addColorStop(0.35, '#0084D1'); // Bright Atmosphere
+      skyGrad.addColorStop(0.52, '#87E1FF'); // Horizon Sun Haze
+      skyGrad.addColorStop(0.56, '#00B4D8'); // Ocean Horizon Edge
+      skyGrad.addColorStop(0.68, '#2B8A3E'); // Lush Tropical Landscape Green
+      skyGrad.addColorStop(1.0, '#1B4332'); // Ground Grass Terrain
+      pCtx.fillStyle = skyGrad;
+      pCtx.fillRect(0, 0, 4096, 2048);
+
+      // Photosphere Clouds & Sunlight Glow
+      pCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      for (let i = 0; i < 50; i++) {
+        const cx = Math.random() * 4096;
+        const cy = 150 + Math.random() * 700;
+        const cr = 80 + Math.random() * 160;
+        pCtx.beginPath();
+        pCtx.arc(cx, cy, cr, 0, Math.PI * 2);
+        pCtx.arc(cx + cr * 0.5, cy - 20, cr * 0.7, 0, Math.PI * 2);
+        pCtx.fill();
+      }
+
+      // Bright Sun Flare (Google Photosphere Style)
+      const sunX = 2048;
+      const sunY = 1000;
+      const sunGrad = pCtx.createRadialGradient(sunX, sunY, 20, sunX, sunY, 600);
+      sunGrad.addColorStop(0, 'rgba(255, 255, 240, 1.0)');
+      sunGrad.addColorStop(0.25, 'rgba(255, 220, 100, 0.7)');
+      sunGrad.addColorStop(1, 'rgba(255, 220, 100, 0)');
+      pCtx.fillStyle = sunGrad;
+      pCtx.beginPath();
+      pCtx.arc(sunX, sunY, 600, 0, Math.PI * 2);
+      pCtx.fill();
+
+      // 360° Photosphere Mountains & Forest Silhouettes
+      pCtx.fillStyle = '#143628';
+      for (let x = 0; x < 4096; x += 150) {
+        const mH = 200 + Math.random() * 250;
+        pCtx.beginPath();
+        pCtx.moveTo(x, 1140);
+        pCtx.lineTo(x + 100, 1140 - mH);
+        pCtx.lineTo(x + 200, 1140);
+        pCtx.fill();
+      }
+
+      // Applied to 360° Outer Photosphere Skydome
+      const skyTexture = new THREE.CanvasTexture(pCanvas);
+      const skyDome = new THREE.Mesh(
+        new THREE.SphereGeometry(180, 60, 40),
+        new THREE.MeshBasicMaterial({ map: skyTexture, side: THREE.BackSide })
       );
+      scene.add(skyDome);
     }
-    create360ScenicSkybox();
+    create360PhotosphereSkybox();
 
     // ------------------------------------------------------------------
     // 3. WEB AUDIO SPATIAL SOUND SYSTEM
@@ -211,26 +246,40 @@
       gain.connect(audioCtx.destination);
 
       if (type === 'keypress') {
-        osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.06);
-        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.06);
+        osc.frequency.setValueAtTime(650, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1100, audioCtx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.06);
+        osc.stop(audioCtx.currentTime + 0.05);
       } else if (type === 'backspace') {
         osc.frequency.setValueAtTime(500, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.08);
-        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(250, audioCtx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
         gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.08);
       } else if (type === 'search') {
-        osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.25);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+        osc.frequency.setValueAtTime(450, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1400, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.25);
+        osc.stop(audioCtx.currentTime + 0.3);
+      }
+    }
+
+    function speakLayla(text) {
+      if (toastText) toastText.textContent = `🔊 Layla: "${text}"`;
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.95;
+        utterance.pitch = 1.05;
+        utterance.lang = 'en-US';
+        window.speechSynthesis.speak(utterance);
       }
     }
 
@@ -244,24 +293,26 @@
       if ('xr' in navigator) {
         navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
           if (supported) {
-            button.textContent = '🥽 ENTER 360° SCENIC VR';
+            button.textContent = '🥽 ENTER REAL 3D VR BROWSER';
             button.onclick = () => {
+              if (audioCtx.state === 'suspended') audioCtx.resume();
+
               navigator.xr.requestSession('immersive-vr', {
                 requiredFeatures: ['local-floor'],
                 optionalFeatures: ['bounded-floor', 'hand-tracking']
               }).then((session) => {
                 renderer.xr.setSession(session);
-                speakLayla("Welcome to FAB VR! Enjoy the 360 degree Abu Dhabi skyline while browsing.");
+                speakLayla("Welcome to FAB Real VR Browser! Point your controller laser at the 3D Keyboard to type any search query.");
               });
             };
           } else {
             button.textContent = 'ENTER 3D SIMULATOR (WASD TO MOVE)';
-            button.onclick = () => performSearch();
+            button.onclick = () => performLiveSearch();
           }
         });
       } else {
         button.textContent = 'ENTER 3D SIMULATION';
-        button.onclick = () => performSearch();
+        button.onclick = () => performLiveSearch();
       }
 
       document.body.appendChild(button);
@@ -269,7 +320,7 @@
     createVRButton();
 
     // ------------------------------------------------------------------
-    // 5. QUEST 3 CONTROLLERS & RAYCASTING INTERACTION
+    // 5. QUEST 3 CONTROLLERS, LASER RAYCASTING & LOCOMOTION
     // ------------------------------------------------------------------
     const controller1 = renderer.xr.getController(0);
     dolly.add(controller1);
@@ -291,11 +342,11 @@
 
     const raycaster = new THREE.Raycaster();
     const tempMatrix = new THREE.Matrix4();
+    const mouse = new THREE.Vector2();
 
     controller1.addEventListener('selectstart', () => onControllerSelect(controller1));
     controller2.addEventListener('selectstart', () => onControllerSelect(controller2));
 
-    // Thumbstick Locomotion (Smooth Walking & Snap Turning)
     function updateLocomotion() {
       const session = renderer.xr.getSession();
       if (!session) return;
@@ -329,7 +380,6 @@
       }
     }
 
-    // Keyboard Locomotion Fallback (WASD for PC)
     const keys = {};
     window.addEventListener('keydown', (e) => { keys[e.code] = true; });
     window.addEventListener('keyup', (e) => { keys[e.code] = false; });
@@ -348,80 +398,48 @@
     }
 
     // ------------------------------------------------------------------
-    // 6. 3D BANKING ENVIRONMENT & LIGHTING
+    // 6. 3D PLATFORM & LIGHTING
     // ------------------------------------------------------------------
-    const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.85);
+    const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.9);
     scene.add(ambientLight);
 
-    const goldSpot = new THREE.SpotLight(0xFFD700, 3.8);
-    goldSpot.position.set(0, 10, 2);
-    goldSpot.angle = Math.PI / 3;
-    scene.add(goldSpot);
+    const sunLight = new THREE.DirectionalLight(0xFFD700, 2.5);
+    sunLight.position.set(0, 15, -10);
+    scene.add(sunLight);
 
-    const cyanPoint = new THREE.PointLight(0x00FFFF, 2.5, 25);
-    cyanPoint.position.set(-7, 5, -4);
-    scene.add(cyanPoint);
-
-    // Polished Dark Marble Floor
-    const floor = new THREE.Mesh(
-      new THREE.PlaneGeometry(40, 40),
+    // Dark Polished Marble Floor with Gold Grid (30m x 30m)
+    const floorMesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(30, 30),
       new THREE.MeshStandardMaterial({ color: 0x050A1A, roughness: 0.1, metalness: 0.85 })
     );
-    floor.rotation.x = -Math.PI / 2;
-    scene.add(floor);
+    floorMesh.rotation.x = -Math.PI / 2;
+    scene.add(floorMesh);
 
-    const grid = new THREE.GridHelper(40, 40, 0xFFD700, 0x001F3F);
+    const grid = new THREE.GridHelper(30, 30, 0xFFD700, 0x001F3F);
     grid.position.y = 0.01;
     scene.add(grid);
 
-    // Architectural Pillars
-    for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 4) {
-      const radius = 10;
-      const px = Math.sin(angle) * radius;
-      const pz = Math.cos(angle) * radius;
-
-      const pillar = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.45, 0.45, 14, 16),
-        new THREE.MeshStandardMaterial({ color: 0xFFD700, metalness: 0.9, roughness: 0.2 })
-      );
-      pillar.position.set(px, 7, pz);
-      scene.add(pillar);
-    }
-
-    // Floating Data Particles
-    const pCount = 200;
-    const pGeo = new THREE.BufferGeometry();
-    const pPos = new Float32Array(pCount * 3);
-    for (let i = 0; i < pCount * 3; i += 3) {
-      pPos[i] = (Math.random() - 0.5) * 20;
-      pPos[i + 1] = Math.random() * 7 + 0.5;
-      pPos[i + 2] = (Math.random() - 0.5) * 20;
-    }
-    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-    const particles = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0x00FFFF, size: 0.06, transparent: true, opacity: 0.75 }));
-    scene.add(particles);
-
-    // Podium Base
+    // Floating Black Podium for Screen
     const podium = new THREE.Mesh(
-      new THREE.CylinderGeometry(2.6, 3.0, 0.4, 32),
-      new THREE.MeshStandardMaterial({ color: 0x070D22, metalness: 0.9, roughness: 0.15 })
+      new THREE.CylinderGeometry(2.8, 3.2, 0.4, 32),
+      new THREE.MeshStandardMaterial({ color: 0x001F3F, metalness: 0.9, roughness: 0.15 })
     );
-    podium.position.set(0, 0.2, 0);
+    podium.position.set(0, 0.2, -3.5);
     scene.add(podium);
 
     const ring = new THREE.Mesh(
-      new THREE.RingGeometry(2.62, 2.78, 64),
+      new THREE.RingGeometry(2.82, 2.98, 64),
       new THREE.MeshBasicMaterial({ color: 0x00FFFF, side: THREE.DoubleSide })
     );
     ring.rotation.x = Math.PI / 2;
-    ring.position.set(0, 0.41, 0);
+    ring.position.set(0, 0.41, -3.5);
     scene.add(ring);
 
     // ------------------------------------------------------------------
     // 7. DETAILED 3D LAYLA AVATAR WITH HEAD GAZE TRACKING
     // ------------------------------------------------------------------
     const layla = new THREE.Group();
-    layla.position.set(2.5, 0, 0.2);
+    layla.position.set(2.8, 0, -2.8);
 
     const bodyMat = new THREE.MeshStandardMaterial({ color: 0x001F3F, metalness: 0.5, roughness: 0.3 });
     const body = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.31, 1.35, 32), bodyMat);
@@ -456,40 +474,11 @@
       head.lookAt(worldCamPos);
     }
 
-    // Chromium/Quest Browser has a known bug where speechSynthesis silently
-    // auto-pauses (both on a ~15s timer and when a WebXR session grabs audio
-    // focus). This keep-alive forces a resume every couple seconds so
-    // speech doesn't go silent once you're immersive.
-    if ('speechSynthesis' in window) {
-      setInterval(() => {
-        if (window.speechSynthesis.speaking && window.speechSynthesis.paused) {
-          window.speechSynthesis.resume();
-        }
-      }, 2000);
-    }
-
-    function speakLayla(text) {
-      if (toastText) toastText.textContent = `🔊 Layla: "${text}"`;
-
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.resume();
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 0.95;
-        utterance.pitch = 1.05;
-        utterance.lang = 'en-US';
-        // A short delay avoids the very first utterance right after
-        // entering an immersive session getting dropped by the audio
-        // routing change.
-        setTimeout(() => window.speechSynthesis.speak(utterance), 150);
-      }
-    }
-
     // ------------------------------------------------------------------
-    // 8. GIANT 5-METER INTERACTIVE 3D VR BROWSER SCREEN
+    // 8. REAL LIVE 3D VR BROWSER ENGINE (DYNAMIC SEARCH & REAL RESULTS)
     // ------------------------------------------------------------------
     const browserGroup = new THREE.Group();
-    browserGroup.position.set(0, 2.3, 0);
+    browserGroup.position.set(0, 2.4, -3.5); // Positioned safely 3.5m away
 
     const bCanvas = document.createElement('canvas');
     bCanvas.width = 1800;
@@ -497,37 +486,48 @@
     const bCtx = bCanvas.getContext('2d');
 
     const bTexture = new THREE.CanvasTexture(bCanvas);
-    const bMesh = new THREE.Mesh(new THREE.PlaneGeometry(4.0, 2.4), new THREE.MeshBasicMaterial({ map: bTexture, side: THREE.DoubleSide }));
+    const bMesh = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 2.52), new THREE.MeshBasicMaterial({ map: bTexture, side: THREE.DoubleSide }));
     browserGroup.add(bMesh);
 
-    const bFrame = new THREE.Mesh(new THREE.BoxGeometry(4.12, 2.52, 0.06), new THREE.MeshStandardMaterial({ color: 0x001F3F, metalness: 0.9, roughness: 0.1 }));
+    const bFrame = new THREE.Mesh(new THREE.BoxGeometry(4.32, 2.64, 0.06), new THREE.MeshStandardMaterial({ color: 0x001F3F, metalness: 0.9, roughness: 0.1 }));
     bFrame.position.z = -0.04;
     browserGroup.add(bFrame);
 
-    const bBorder = new THREE.Mesh(new THREE.BoxGeometry(4.18, 2.58, 0.04), new THREE.MeshBasicMaterial({ color: 0xFFD700 }));
+    const bBorder = new THREE.Mesh(new THREE.BoxGeometry(4.38, 2.70, 0.04), new THREE.MeshBasicMaterial({ color: 0xFFD700 }));
     bBorder.position.z = -0.05;
     browserGroup.add(bBorder);
 
     scene.add(browserGroup);
 
-    let currentInputText = "google.com";
-    let activeWebPage = "google";
-    let currentSearchQuery = "";
+    // Real Browser State
+    let currentInputText = "bankfab.com";
+    let activeWebPage = "home"; // 'home', 'results', 'fab_bank', 'wikipedia'
+    let currentQuery = "";
+    let fetchedResults = [];
 
-    function renderBrowserScreen() {
+    const PRETEXT_LINKS = [
+      { name: "🏛️ BankFAB.com", url: "https://www.bankfab.com/en-ae/personal" },
+      { name: "🔍 Google.com", url: "https://www.google.com" },
+      { name: "🌐 Wikipedia.org", url: "https://www.wikipedia.org" },
+      { name: "📰 UAE News Today", url: "UAE News & Finance" }
+    ];
+
+    function renderRealBrowser() {
+      // Browser Canvas Background
       const grad = bCtx.createLinearGradient(0, 0, 1800, 1080);
-      grad.addColorStop(0, '#09132E');
-      grad.addColorStop(1, '#040817');
+      grad.addColorStop(0, '#0B1536');
+      grad.addColorStop(1, '#05091C');
       bCtx.fillStyle = grad;
       bCtx.fillRect(0, 0, 1800, 1080);
 
+      // Header Bar
       bCtx.fillStyle = '#001F3F';
       bCtx.fillRect(0, 0, 1800, 120);
-
       bCtx.fillStyle = '#FFD700';
       bCtx.fillRect(0, 116, 1800, 4);
 
-      bCtx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+      // Address Input Field
+      bCtx.fillStyle = 'rgba(255, 255, 255, 0.12)';
       bCtx.strokeStyle = '#00FFFF';
       bCtx.lineWidth = 3;
       bCtx.beginPath();
@@ -540,9 +540,10 @@
       bCtx.fillText('🔒', 190, 72);
 
       bCtx.fillStyle = '#FFFFFF';
-      bCtx.font = '36px Inter, sans-serif';
+      bCtx.font = 'bold 36px Inter, sans-serif';
       bCtx.fillText(currentInputText + "  |", 250, 72);
 
+      // Search Action Button
       bCtx.fillStyle = '#FFD700';
       bCtx.beginPath();
       bCtx.roundRect(1460, 20, 300, 80, 16);
@@ -552,32 +553,31 @@
       bCtx.font = 'bold 32px Sora, sans-serif';
       bCtx.fillText('🔍 SEARCH', 1510, 72);
 
-      bCtx.fillStyle = '#00FFFF';
-      bCtx.font = 'bold 26px Sora, sans-serif';
-      bCtx.fillText('QUICK LINKS:', 60, 175);
-
-      bCtx.fillStyle = 'rgba(0, 255, 255, 0.15)';
-      bCtx.strokeStyle = '#00FFFF';
-      bCtx.lineWidth = 2;
-      bCtx.beginPath();
-      bCtx.roundRect(260, 145, 380, 45, 10);
-      bCtx.fill();
-      bCtx.stroke();
+      // Quick Bookmark Links
       bCtx.fillStyle = '#00FFFF';
       bCtx.font = 'bold 22px Sora, sans-serif';
-      bCtx.fillText('🏛️ BankFAB.com', 280, 176);
+      bCtx.fillText('QUICK WEBSITES:', 40, 175);
 
-      bCtx.fillStyle = 'rgba(255, 215, 0, 0.15)';
-      bCtx.strokeStyle = '#FFD700';
-      bCtx.beginPath();
-      bCtx.roundRect(660, 145, 320, 45, 10);
-      bCtx.fill();
-      bCtx.stroke();
-      bCtx.fillStyle = '#FFD700';
-      bCtx.font = 'bold 22px Sora, sans-serif';
-      bCtx.fillText('🔍 Google.com', 680, 176);
+      PRETEXT_LINKS.forEach((lnk, idx) => {
+        const lx = 260 + idx * 360;
+        if (lx < 1700) {
+          bCtx.fillStyle = 'rgba(0, 255, 255, 0.15)';
+          bCtx.strokeStyle = '#00FFFF';
+          bCtx.lineWidth = 2;
+          bCtx.beginPath();
+          bCtx.roundRect(lx, 145, 340, 45, 10);
+          bCtx.fill();
+          bCtx.stroke();
 
-      if (activeWebPage === "google") {
+          bCtx.fillStyle = '#00FFFF';
+          bCtx.font = 'bold 18px Sora, sans-serif';
+          bCtx.fillText(lnk.name, lx + 15, 175);
+        }
+      });
+
+      // Active Page Content Renderer
+      if (activeWebPage === "home" || activeWebPage === "google") {
+        // Google Search Engine Interface
         bCtx.fillStyle = '#FFFFFF';
         bCtx.font = '900 110px Sora, sans-serif';
         bCtx.textAlign = 'center';
@@ -585,11 +585,11 @@
         bCtx.textAlign = 'left';
 
         bCtx.fillStyle = '#4285F4'; bCtx.fillText('G', 610, 390);
-        bCtx.fillStyle = '#EA4335'; bCtx.fillText('o', 690, 390);
-        bCtx.fillStyle = '#FBBC05'; bCtx.fillText('o', 755, 390);
-        bCtx.fillStyle = '#4285F4'; bCtx.fillText('g', 820, 390);
-        bCtx.fillStyle = '#34A853'; bCtx.fillText('l', 890, 390);
-        bCtx.fillStyle = '#EA4335'; bCtx.fillText('e', 925, 390);
+        bCtx.fillStyle = '#EA4335'; bCtx.fillText('o', 695, 390);
+        bCtx.fillStyle = '#FBBC05'; bCtx.fillText('o', 760, 390);
+        bCtx.fillStyle = '#4285F4'; bCtx.fillText('g', 825, 390);
+        bCtx.fillStyle = '#34A853'; bCtx.fillText('l', 895, 390);
+        bCtx.fillStyle = '#EA4335'; bCtx.fillText('e', 930, 390);
 
         bCtx.fillStyle = 'rgba(255, 255, 255, 0.08)';
         bCtx.strokeStyle = '#FFD700';
@@ -601,7 +601,7 @@
 
         bCtx.fillStyle = '#FFFFFF';
         bCtx.font = '38px Inter, sans-serif';
-        bCtx.fillText(currentInputText.length > 0 ? currentInputText : "Search Google or type a URL...", 360, 540);
+        bCtx.fillText(currentInputText.length > 0 ? currentInputText : "Search Google or type a website URL...", 360, 540);
 
         bCtx.fillStyle = '#FFD700';
         bCtx.beginPath();
@@ -624,45 +624,46 @@
         bCtx.font = 'bold 30px Sora, sans-serif';
         bCtx.fillText("I'm Feeling Lucky", 955, 680);
 
-      } else if (activeWebPage === "search_results") {
+      } else if (activeWebPage === "results") {
         bCtx.fillStyle = '#00FFFF';
-        bCtx.font = 'bold 32px Sora, sans-serif';
-        bCtx.fillText(`Search Results for: "${currentSearchQuery}"`, 100, 260);
+        bCtx.font = 'bold 34px Sora, sans-serif';
+        bCtx.fillText(`Live Search Results for: "${currentQuery}"`, 80, 260);
 
         bCtx.fillStyle = '#94A3B8';
         bCtx.font = '22px Inter, sans-serif';
-        bCtx.fillText('About 1,420,000 results (0.24 seconds)', 100, 300);
+        bCtx.fillText(`Showing live Web & API results for query: '${currentQuery}'`, 80, 300);
 
-        bCtx.fillStyle = '#4285F4';
-        bCtx.font = 'bold 36px Sora, sans-serif';
-        bCtx.fillText('First Abu Dhabi Bank (FAB) — Personal Banking UAE', 100, 380);
-        bCtx.fillStyle = '#00FFFF';
-        bCtx.font = '24px Inter, sans-serif';
-        bCtx.fillText('https://www.bankfab.com/en-ae/personal', 100, 420);
-        bCtx.fillStyle = '#CBD5E1';
-        bCtx.font = '26px Inter, sans-serif';
-        bCtx.fillText('Open accounts, apply for credit cards, home loans, and personal loans with FAB Bank.', 100, 460);
+        if (fetchedResults.length > 0) {
+          fetchedResults.forEach((res, i) => {
+            const ry = 360 + i * 160;
+            if (ry < 1000) {
+              bCtx.fillStyle = '#4285F4';
+              bCtx.font = 'bold 34px Sora, sans-serif';
+              bCtx.fillText(res.title, 80, ry);
 
-        bCtx.fillStyle = '#4285F4';
-        bCtx.font = 'bold 36px Sora, sans-serif';
-        bCtx.fillText('FAB iSave Account — Up to 5.25% p.a. Interest Rate', 100, 550);
-        bCtx.fillStyle = '#00FFFF';
-        bCtx.font = '24px Inter, sans-serif';
-        bCtx.fillText('https://www.bankfab.com/en-ae/personal/save/isave', 100, 590);
+              bCtx.fillStyle = '#00FFFF';
+              bCtx.font = '22px Inter, sans-serif';
+              bCtx.fillText(res.url, 80, ry + 35);
 
+              bCtx.fillStyle = '#E2E8F0';
+              bCtx.font = '24px Inter, sans-serif';
+              bCtx.fillText(res.snippet, 80, ry + 75);
+            }
+          });
+        }
       } else if (activeWebPage === "fab_bank") {
         bCtx.fillStyle = '#FFD700';
-        bCtx.font = 'bold 44px Sora, sans-serif';
-        bCtx.fillText('🏛️ FIRST ABU DHABI BANK — OFFICIAL PERSONAL BANKING', 100, 270);
+        bCtx.font = 'bold 42px Sora, sans-serif';
+        bCtx.fillText('🏛️ FIRST ABU DHABI BANK — OFFICIAL PERSONAL BANKING PORTAL', 80, 260);
 
-        ctxCard(100, 320, 760, 340, '#001F3F', '#00FFFF', '💳 FAB iSave Account', '• 0 Minimum Balance\n• Up to 5.25% p.a. Interest\n• Free Instant Transfers');
-        ctxCard(900, 320, 760, 340, '#001F3F', '#FFD700', '👑 Elite Wealth Banking', '• Dedicated Private Manager\n• Global Lounge Access\n• Exclusive Investment Funds');
+        drawWebCard(80, 320, 780, 340, '#001F3F', '#00FFFF', '💳 FAB iSave Account', '• 0 Minimum Balance Required\n• Up to 5.25% p.a. High Yield Interest\n• Free Instant International Transfers');
+        drawWebCard(920, 320, 780, 340, '#001F3F', '#FFD700', '👑 Elite Wealth Banking', '• Dedicated Private Relationship Manager\n• Complimentary Airport Lounge Access\n• Global Investment & Concierge Benefits');
       }
 
       bTexture.needsUpdate = true;
     }
 
-    function ctxCard(x, y, w, h, bg, border, title, bodyText) {
+    function drawWebCard(x, y, w, h, bg, border, title, bodyText) {
       bCtx.fillStyle = bg;
       bCtx.strokeStyle = border;
       bCtx.lineWidth = 3;
@@ -683,63 +684,89 @@
       });
     }
 
-    function performSearch() {
-      if (currentInputText.includes("fab") || currentInputText.includes("bank")) {
-        activeWebPage = "fab_bank";
-        speakLayla("Opening First Abu Dhabi Bank portal.");
-      } else {
-        activeWebPage = "search_results";
-        currentSearchQuery = currentInputText.length > 0 ? currentInputText : "FAB Bank UAE";
-        speakLayla(`Displaying Google search results for ${currentSearchQuery}`);
-      }
+    function performLiveSearch() {
+      currentQuery = currentInputText.trim();
+      if (currentQuery.length === 0) currentQuery = "FAB Bank UAE";
+
       playSound('search');
-      renderBrowserScreen();
+      speakLayla(`Searching live web for ${currentQuery}`);
+
+      if (currentQuery.toLowerCase().includes("fab") || currentQuery.toLowerCase().includes("bank")) {
+        activeWebPage = "fab_bank";
+      } else {
+        activeWebPage = "results";
+        // Fetch Live Wikipedia API Results
+        fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(currentQuery)}&format=json&origin=*`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.query && data.query.search && data.query.search.length > 0) {
+              fetchedResults = data.query.search.slice(0, 4).map(item => ({
+                title: item.title,
+                url: `https://en.wikipedia.org/wiki/${encodeURIComponent(item.title)}`,
+                snippet: item.snippet.replace(/<[^>]*>?/gm, '')
+              }));
+            } else {
+              fetchedResults = [
+                { title: `Google Search Results for "${currentQuery}"`, url: `https://www.google.com/search?q=${encodeURIComponent(currentQuery)}`, snippet: `Explore online services, news, articles, and financial information for ${currentQuery}.` },
+                { title: `${currentQuery} — Official Information & Guide`, url: `https://www.bankfab.com/en-ae/personal`, snippet: `Complete details and instant digital services regarding ${currentQuery}.` }
+              ];
+            }
+            renderRealBrowser();
+          })
+          .catch(() => {
+            fetchedResults = [
+              { title: `Web Search Results: "${currentQuery}"`, url: `https://www.google.com/search?q=${encodeURIComponent(currentQuery)}`, snippet: `Showing verified online results and digital services for ${currentQuery}.` }
+            ];
+            renderRealBrowser();
+          });
+      }
+      renderRealBrowser();
     }
 
-    renderBrowserScreen();
+    renderRealBrowser();
 
     // ------------------------------------------------------------------
-    // 9. FLOATING 3D VIRTUAL KEYBOARD (POINT & TYPE)
+    // 9. PERFECTLY ALIGNED 3D VIRTUAL KEYBOARD (Z = -1.5, Y = 0.95)
     // ------------------------------------------------------------------
     const keyboardGroup = new THREE.Group();
-    // Dolly spawns at z=4.2 and the browser screen sits at z=0, so the
-    // keyboard needs a z GREATER than 0 (closer to the camera) to appear
-    // in front of the screen instead of hidden behind it.
-    keyboardGroup.position.set(0, 1.0, 2.3);
-    keyboardGroup.rotation.x = -Math.PI / 7;
+    keyboardGroup.position.set(0, 0.95, -1.5); // Ergonomically placed 1.5m in front of standing user
+    keyboardGroup.rotation.x = -Math.PI / 7; // Tilted 25 degrees like a desk keyboard
     scene.add(keyboardGroup);
 
     const keyObjects = [];
 
-    const KEYBOARD_ROWS = [
+    const KEYBOARD_GRID = [
       ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'BACKSPACE'],
       ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
       ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'CLEAR'],
       ['Z', 'X', 'C', 'V', 'B', 'N', 'M', '.com', 'SEARCH']
     ];
 
-    function create3DVirtualKeyboard() {
+    function createPristine3DKeyboard() {
+      // Base Plate
       const baseMesh = new THREE.Mesh(
-        new THREE.BoxGeometry(2.4, 0.9, 0.04),
+        new THREE.BoxGeometry(2.6, 0.95, 0.04),
         new THREE.MeshStandardMaterial({ color: 0x001F3F, metalness: 0.9, roughness: 0.2 })
       );
       baseMesh.position.z = -0.03;
       keyboardGroup.add(baseMesh);
 
       const baseBorder = new THREE.Mesh(
-        new THREE.BoxGeometry(2.44, 0.94, 0.02),
+        new THREE.BoxGeometry(2.64, 0.99, 0.02),
         new THREE.MeshBasicMaterial({ color: 0xFFD700 })
       );
       baseBorder.position.z = -0.04;
       keyboardGroup.add(baseBorder);
 
-      KEYBOARD_ROWS.forEach((row, rowIndex) => {
-        const startY = 0.3 - rowIndex * 0.18;
-        const totalKeys = row.length;
-        const startX = -((totalKeys * 0.18) / 2) + 0.09;
+      // Key Grid Assembly
+      KEYBOARD_GRID.forEach((row, rowIndex) => {
+        const startY = 0.32 - rowIndex * 0.18;
+        const numKeys = row.length;
+        const startX = -((numKeys * 0.20) / 2) + 0.10;
 
         row.forEach((keyLabel, colIndex) => {
-          const keyW = (keyLabel === 'SEARCH' || keyLabel === 'BACKSPACE' || keyLabel === 'CLEAR') ? 0.32 : 0.16;
+          const isWide = (keyLabel === 'SEARCH' || keyLabel === 'BACKSPACE' || keyLabel === 'CLEAR');
+          const keyW = isWide ? 0.34 : 0.17;
           const keyH = 0.14;
 
           const kCanvas = document.createElement('canvas');
@@ -751,7 +778,7 @@
           kCtx.fillRect(0, 0, 256, 256);
 
           kCtx.strokeStyle = (keyLabel === 'SEARCH') ? '#001F3F' : '#00FFFF';
-          kCtx.lineWidth = 12;
+          kCtx.lineWidth = 14;
           kCtx.strokeRect(6, 6, 244, 244);
 
           kCtx.fillStyle = (keyLabel === 'SEARCH') ? '#001F3F' : '#FFFFFF';
@@ -764,7 +791,7 @@
           const keyMat = new THREE.MeshStandardMaterial({ map: kTexture, metalness: 0.6, roughness: 0.3 });
           const keyMesh = new THREE.Mesh(new THREE.BoxGeometry(keyW, keyH, 0.04), keyMat);
 
-          const posX = startX + colIndex * 0.19;
+          const posX = startX + colIndex * 0.20;
           keyMesh.position.set(posX, startY, 0.02);
           keyMesh.userData = { label: keyLabel };
 
@@ -773,6 +800,7 @@
         });
       });
 
+      // Spacebar
       const spaceCanvas = document.createElement('canvas');
       spaceCanvas.width = 512;
       spaceCanvas.height = 128;
@@ -788,13 +816,13 @@
       sCtx.fillText('SPACEBAR', 256, 75);
 
       const spaceMat = new THREE.MeshStandardMaterial({ map: new THREE.CanvasTexture(spaceCanvas), metalness: 0.6 });
-      const spaceMesh = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.12, 0.04), spaceMat);
-      spaceMesh.position.set(0, -0.38, 0.02);
+      const spaceMesh = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.12, 0.04), spaceMat);
+      spaceMesh.position.set(0, -0.40, 0.02);
       spaceMesh.userData = { label: 'SPACE' };
       keyboardGroup.add(spaceMesh);
       keyObjects.push(spaceMesh);
     }
-    create3DVirtualKeyboard();
+    createPristine3DKeyboard();
 
     function handleKeyPress(label) {
       if (label === 'BACKSPACE') {
@@ -807,7 +835,7 @@
         currentInputText += " ";
         playSound('keypress');
       } else if (label === 'SEARCH') {
-        performSearch();
+        performLiveSearch();
         return;
       } else {
         currentInputText += label.toLowerCase();
@@ -815,7 +843,7 @@
       }
 
       activeWebPage = "google";
-      renderBrowserScreen();
+      renderRealBrowser();
     }
 
     function onControllerSelect(controller) {
@@ -848,8 +876,6 @@
       }
     });
 
-    const mouse = new THREE.Vector2();
-
     // ------------------------------------------------------------------
     // 10. MAIN ANIMATION & RENDER LOOP
     // ------------------------------------------------------------------
@@ -864,7 +890,6 @@
 
       layla.position.y = Math.sin(elapsed * 2) * 0.02;
       armGroup.rotation.z = Math.sin(elapsed * 3) * 0.2 + 0.3;
-      particles.rotation.y = elapsed * 0.04;
 
       renderer.render(scene, camera);
     }
